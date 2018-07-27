@@ -12,7 +12,6 @@ module.exports = router;
 
 router.get('/', async (req, res) => {
   // const { id } = req.params;
-  
     try {
       const response =  await db.query('SELECT * FROM tTask');
       console.log(response.rows)
@@ -21,6 +20,5 @@ router.get('/', async (req, res) => {
     catch(err) {
       console.error("My ERROR", err);
     }
-
   }
 );
