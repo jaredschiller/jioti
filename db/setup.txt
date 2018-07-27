@@ -13,13 +13,15 @@ select 'Deferred';
 CREATE TABLE tTask (
     ID serial PRIMARY KEY,
     description varchar (512) NOT NULL,
-    statusID integer REFERENCES tTaskStatus NOT NULL,
+    taskStatusID integer REFERENCES tTaskStatus NOT NULL,
     isDeleted boolean DEFAULT false NOT NULL,
     createdMoment timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
     completedMoment timestamp,
     changedMoment timestamp
 );
 
-insert into tTask (description, statusID, isDeleted, createdMoment)
+insert into tTask (description, taskStatusID, isDeleted, createdMoment)
 select 'Fix Chirpper Birthdate bug', 4, false, CURRENT_TIMESTAMP union
+select 'A deleted task', 1, true, CURRENT_TIMESTAMP union
+select 'Purchase MBP', 3, false, CURRENT_TIMESTAMP union
 select 'Create tTaskStatus table for JIOTI', 2, false, CURRENT_TIMESTAMP;
