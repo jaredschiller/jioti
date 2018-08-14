@@ -12,13 +12,12 @@ module.exports = router;
 
 router.get('/', async (req, res) => {
   // const { id } = req.params;
-    try {
-      const response =  await db.query('SELECT count(T.id) from tTask T join tTaskStatus TS on TS.ID = T.taskStatusID where isDeleted = true');
-      console.log(response.rows)
+    try { 
+      const response =  await db.query('select  ps.name, p.name from tProject p join  tProjectStatus ps  on (p.ProjectStatusID = ps.ID);');
+      console.log(response);
       res.send(response.rows);
     }
     catch(err) {
       console.error("My ERROR", err);
     }
-  }
-);
+}); 

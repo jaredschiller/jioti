@@ -1,27 +1,66 @@
-CREATE TABLE tTaskStatus (
+CREATE TABLE tProjectStatus (
     ID serial PRIMARY KEY,
-    name varchar (50) NOT NULL
+    name varchar (32) NOT NULL,
+    isDeleted boolean NOT NULL DEFAULT false,
+    changeDate TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-INSERT INTO tTaskStatus (name)
-select 'Not Started' union
-select 'In Progress' union
-select 'Done' union
-select 'Blocked' union
-select 'Deferred';
+INSERT INTO tProjectStatus (name)
+SELECT 'Not Started' union
+SELECT 'Started' union
+SELECT 'Stuck' union
+SELECT 'In Progress' union
+SELECT 'On Hold' union
+SELECT 'Complete';
+
+CREATE TABLE tProject (
+    ID serial PRIMARY KEY,
+    projectStatusID int REFERENCES tProjectStatus NOT NULL,
+    name varchar (32) NOT NULL,
+    isDeleted boolean DEFAULT false NOT NULL,
+    changeDate TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+INSERT INTO tProject (projectStatusID, name)
+SELECT 1, 'My first project' union
+select 3, 'Another project';
+
 
 CREATE TABLE tTask (
     ID serial PRIMARY KEY,
-    description varchar (512) NOT NULL,
-    taskStatusID integer REFERENCES tTaskStatus NOT NULL,
-    isDeleted boolean DEFAULT false NOT NULL,
-    createdMoment timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    completedMoment timestamp,
-    changedMoment timestamp
+    projectID int NOT NULL REFERENCES tProject,
+    name varchar (120) NOT NULL,
+    isComplete boolean NOT NULL DEFAULT false,
+    isDeleted boolean NOT NULL DEFAULT false,
+    createDate TIMESTAMPTZ NOT NULL DEFAULT now(),
+    changeDate TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-insert into tTask (description, taskStatusID, isDeleted, createdMoment)
-select 'Fix Chirpper Birthdate bug', 4, false, CURRENT_TIMESTAMP union
-select 'A deleted task', 1, true, CURRENT_TIMESTAMP union
-select 'Purchase MBP', 3, false, CURRENT_TIMESTAMP union
-select 'Create tTaskStatus table for JIOTI', 2, false, CURRENT_TIMESTAMP;
+INSERT INTO tTask (projectID, name, isComplete)
+select 1, 'First task', false union
+select 2, 'this one is all done', true;
+
+
+
+CREATE TABLE tTaskTimeCapture (
+    ID serial NOT NULL,
+    taskID int NOT NULL REFERENCES tTask,
+    startMoment TIMESTAMPTZ NOT NULL DEFAULT now(), 
+    endMoment TIMESTAMPTZ,
+    isDeleted boolean NOT NULL DEFAULT true
+);
+
+INSERT INTO tTaskTimeCapture (taskID)
+select 1;
+
+create table tTaskNote (
+    ID serial PRIMARY KEY,
+    taskID int NOT NULL REFERENCES tTask,   
+    note varchar (256) NOT NULL,
+    createdate TIMESTAMPTZ NOT NULL DEFAULT now(),
+    isDeleted boolean NOT NULL DEFAULT false
+);
+
+insert into tTaskNote (taskID, note, isDeleted)
+select 1, 'A non-deleted task assigned to tTask.ID = 1', false union
+select 1, 'A deleted task assigned to tTask.ID = 1', true;
