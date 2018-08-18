@@ -1,6 +1,6 @@
-const tasks = require('./task');
+const project = require('./project');
 
 module.exports = (app) => {
-  app.use('/tasks', tasks)
+  app.use('/projects', project)
   // etc..
 }

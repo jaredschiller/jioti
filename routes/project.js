@@ -11,13 +11,9 @@ const router = new Router();
 module.exports = router;
 
 router.get('/', async (req, res) => {
-  // const { id } = req.params;
-    try { 
-      const response =  await db.query('select  ps.name, p.name from tProject p join  tProjectStatus ps  on (p.ProjectStatusID = ps.ID);');
-      console.log(response);
-      res.send(response.rows);
-    }
-    catch(err) {
-      console.error("My ERROR", err);
-    }
+      const response =  await db.query('select ps.name as psname, p.name as pname from tProject p join tProjectStatus ps on (p.ProjectStatusID = ps.ID);');
+      console.log(response.rows);
+      console.log(typeof(response.rows));
+      console.log(response.rows[0].psname);
+      res.render('project');
 }); 
